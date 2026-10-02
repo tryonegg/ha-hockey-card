@@ -1,0 +1,1186 @@
+.hockey-scorebug-wrapper {
+	container-type: inline-size;
+	container-name: hockeyCard;
+
+	/* Defaults to the team's home colours - also what an untracked-side
+	card (no game scheduled / unavailable) gets, since neither tracked
+	class is present there. */
+	--background-color: var(--home-background);
+	--text-color: var(--home-text);
+	--accent-color: var(--home-accent);
+
+	&.hockey-tracked-away {
+		--background-color: var(--away-background);
+		--text-color: var(--away-text);
+		--accent-color: var(--away-accent);
+	}
+
+}
+
+.hockey-scorebug{
+	width: 100%;
+	display: grid;
+
+	align-items: center;
+	justify-content: center;
+	gap: 0 8px;
+	box-sizing: border-box;
+	padding: 8px;
+
+	border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+	transition: none;
+
+	* {
+		box-sizing: border-box;
+	}
+
+	.hockey-team{
+		position: relative;
+
+		.hockey-record {
+			display: block;
+			cursor: help;
+			font-size: 0.8em;
+			font-weight: normal;
+			opacity: 0.6;
+
+		}
+	}
+
+	.hockey-extra{
+		z-index: 1;
+		grid-area: extra;
+	}
+
+	.hockey-h2h{
+		.hockey-series{
+			margin-top: 5px;
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 10px;
+			display: none;
+			.hockey-series-game{
+				flex-grow: 1;
+				height: 10px;
+				background: #DCD9D2;
+				display: block;
+				&[data-result="win"]{
+					background: var(--accent-color);
+				}
+				&[data-result="loss"]{
+					background: repeating-linear-gradient(135deg,#EDEBE6 0 3px,#E2DFD8 3px 6px);
+				}
+			}
+		}
+		ul{
+			list-style: none;
+			padding: 0;
+			margin-top: 2em;
+			gap: 1em;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+		}
+		li{
+			border: 1px solid color-mix(in srgb, currentColor, transparent 75%);
+			border-radius: var(--ha-border-radius-lg);
+			padding: 8px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+			overflow: hidden;
+			position: relative;
+			&:before{
+				z-index: -1;
+				display: block;
+				position: absolute;
+				content: "";
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				opacity: 0.10;
+				scale: 1.5;
+				background: var(--logo);
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+			.hockey-h2h-team {
+				display: flex;
+				justify-content: space-between;
+				flex-basis: 100%;
+				flex-grow: 1;
+				flex-shrink: 1;
+				font-size: 1.2em;
+				&:not(.hockey-h2h-win){
+					color: color-mix(in srgb, currentColor, transparent 40%);
+				}
+			}
+			.hockey-h2h-win{
+				font-weight: 900;
+			}
+			.hockey-h2h-result{
+				display: none;
+				flex-basis: 40%;			
+				order: 4;
+				flex-grow: 1;
+				color: color-mix(in srgb, currentColor, transparent 60%);
+
+			}
+			.hockey-h2h-date{
+				flex-basis: 50%;
+				flex-grow: 1;
+				order: 0;
+				text-align: center;
+				/* 				color: color-mix(in srgb, currentColor, transparent 60%); */
+			}
+		}
+	}	
+
+	.hockey-shootout{
+		font-weight: 900;
+		text-transform: uppercase;		
+		.hockey-so-label{
+			text-align: center;
+			width: 100%;
+			display: block;
+			position: absolute;
+			left: -1000px;
+		}
+		thead{
+			position: absolute;
+			left: -1000px;
+		}
+		td:first-of-type{
+			padding-right: 1em;
+		}
+		.hockey-so-dot{
+			border-radius: 100px;
+			height: 16px;
+			width: 16px;
+			background: #DCD9D2;
+			display: block;
+			&.hockey-so-goal{
+				background: currentColor;
+			}
+		}
+		.hockey-shootout-narrative{
+			display: none;
+		}
+	}	
+
+	/* Unavailable / No game scheduled */
+	&.hockey-empty{
+		grid-template: "team" "extra";
+		--team-logo-size: 64px;	
+		text-align: center;
+		background: var(--background-color);
+		color: var(--text-color);
+		padding: 1em;
+		/* Tracks the same responsive sizing as the in-game logos. */
+
+		.hockey-team{
+			justify-items: center;
+			--team-layout: "logo" "name";
+		}
+
+		.hockey-logo {
+			height: var(--team-logo-size);
+			width: var(--team-logo-size);
+			object-fit: contain;
+			margin-bottom: 6px;
+		}
+		.hockey-team-name {
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.hockey-empty-text {
+			font-size: 14px;
+			opacity: 0.8;
+			padding-top: 4px;
+		}
+	}
+
+	&.hockey-live{
+		.hockey-home-team,
+		.hockey-away-team{
+			&:after,
+			&:before{
+				position: absolute;
+				top: 0;
+				left: 50%;
+				white-space: nowrap;
+				transform: translate(-50%, -90%);
+				font-size: 0.8em;
+				font-weight: 900;
+				text-transform: uppercase;
+				background: var(--accent-color);
+				padding: 0.25em 0.5em;
+				border-radius: 0 0 0.5em 0.5em;
+			}
+			&:after{
+				background: none;
+				color: var(--accent-color);
+				filter: invert(100%) saturate(0) contrast(1000%);
+			}
+		}
+
+		/* power plays */
+		&.hockey-power-play {
+
+			&.hockey-power-play-home .hockey-home-team,
+			&.hockey-power-play-away .hockey-away-team{
+				&:after,
+				&:before{
+					content: "Power Play";
+				}
+			}
+		}
+
+		/* Empty Net */
+		&.hockey-empty-net{
+
+			&.hockey-empty-net-home .hockey-home-team,
+			&.hockey-empty-net-away .hockey-away-team{
+				&:after,
+				&:before{
+					content: "Empty Net";			
+				}
+			}
+		}
+
+		&.hockey-power-play.hockey-empty-net{
+			outline-color: blue;
+			&.hockey-empty-net-home .hockey-home-team,
+			&.hockey-empty-net-away .hockey-away-team{
+				&:after,
+				&:before{
+					content: "PP & EN";			
+				}
+			}		
+		}
+
+		.hockey-strength{
+			display: flex;
+			gap: 1em;
+			justify-content: center;
+		}
+		.hockey-strength-count{
+		}
+		.hockey-strength-label{
+			display: none;
+		}			
+
+	}
+
+	&.hockey-final{
+		.hockey-game-type{
+			display: none;
+		}
+	}
+}
+
+
+/* Stacked */
+.hockey-scorebug.hockey-layout-stacked {
+
+	.hockey-time-section {
+		z-index: 1;
+		grid-area: time;
+		height: 100%;
+	}
+
+	.hockey-team {
+		z-index:1;
+		display: grid;
+		grid-template: var(--team-layout);
+		grid-template-columns: var(--team-column-size);
+		grid-template-rows: var(--team-row-size);
+		gap: 0 8px;
+
+		&.hockey-away-team {
+			grid-area: away;
+		}
+		&.hockey-home-team {
+			grid-area: home;
+		}
+		.hockey-team-name {
+			font-size: var(--team-name-font-size);
+			text-align: left;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			grid-area: name;
+			width: 100%;
+			font-size: 1.1em;
+			font-weight: 900;
+			text-transform: uppercase;
+		}
+
+
+		.hockey-logo {
+			height: var(--team-logo-size);
+			width: var(--team-logo-size);
+			grid-area: logo;
+			overflow: hidden;
+			&[src*="nhl"] {
+				scale: 1.5;
+			}
+		}
+
+		.hockey-score {
+			font-size: var(--team-score-font-size);
+			font-weight: bold;
+			grid-area: score;
+		}
+		.hockey-sog {
+			font-size: var(--team-sog-font-size);
+			grid-area: sog;
+		}		
+	}
+
+	/* Future Game */
+	&.hockey-upcoming{
+		--team-logo-size: 48px;
+		padding-right: 16px;
+		grid-template:
+			"time -"
+			"time away"
+			"time home"
+			"time extra";
+		grid-template-rows: 0px 1fr 1fr auto;
+		grid-template-columns: clamp(100px, 35%, 150px) 1fr;
+		gap: 1em;
+
+		.hockey-time-section{
+			border-radius: 
+				var(--ha-card-border-radius, var(--ha-border-radius-lg))
+				0
+				0
+				var(--ha-card-border-radius, var(--ha-border-radius-lg));
+			background: var(--background-color, #fff);
+			color: var(--text-color, currentColor);
+			padding: 1.5em 8px;
+			display: flex;
+			gap: 7px;
+			flex-direction: column;
+
+			.hockey-tracked-home & {
+				filter: var(--background-color, invert(1));
+			}		
+
+			border-right: 1px dotted color-mix(in srgb, currentColor, transparent 80%);
+
+
+			.hockey-game-type {
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				font-size: 0.7em;
+			}
+			.hockey-date {
+				text-transform: uppercase;
+				line-height: 1;
+				font-size: clamp(1em, 6cqw, 1.8em);
+				font-weight: 900;
+				.tomorrow{
+					font-size: clamp(0.7em, 4.5cqw, 0.8em)
+				}
+				.weekday{
+					display: block;
+				}
+			}		
+			.hockey-time {
+				font-size: clamp(0.8em, 6cqw, 1em);
+				text-transform: uppercase;
+			}			
+			.hockey-network {
+				font-size: 0.6em;
+				font-weight: bold;
+				max-width: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				opacity: 0.6;
+			}			
+
+		}		
+
+		.hockey-team{
+			align-items: center;
+			justify-items: start;
+			--team-layout: "logo name";
+			--team-column-size: var(--team-logo-size) 1fr;
+			--team-row-size: 1fr;	
+			&.hockey-away-team {
+				align-self: end;
+			}
+			&.hockey-home-team {
+				align-self: start;
+			}
+		}
+
+		.hockey-record{
+			font-size: 0.8rem;
+			opacity: 0.6;
+			font-weight: 600;
+			display: block;
+		}
+
+		.hockey-extra{
+			text-transform: uppercase;
+			grid-area: extra;
+			border-top: 1px solid var(--accent-color);
+			/* 		color: color-mix(in srgb, currentColor, transparent 60%); */
+			font-size: 0.8rem;
+			font-weight: 600;
+			padding-top: 0.75em;
+			padding-bottom: 1em;
+			&:empty{
+				display: none;
+			}
+		}
+
+		.hockey-sog{
+			display: none;
+		}
+
+
+	}
+
+	/* Live Game */
+	&.hockey-live,
+	&.hockey-final{
+
+		padding: 16px;
+		grid-template: "away time home" "extra extra extra";
+		grid-template-columns: none;
+		grid-template-columns: 1fr 10em 1fr;
+		--team-logo-size: 64px;
+		--team-name-font-size: 22px;
+		--team-score-font-size: 36px;
+		--team-sog-font-size: 14px;
+		--team-column-size: auto;
+		--team-row-size: auto;
+		--team-layout: "logo score" "logo sog" "name extr";
+
+		.hockey-home-team{
+			--team-layout: " score logo" " sog logo" " extr name";	
+		}
+
+		/* 	Game Clock */
+		.hockey-time-section{
+			text-align: center;
+
+			.hockey-period{
+				font-weight: 900;
+			}
+
+			.hockey-clock,
+			.hockey-date {
+				font-size: 18px;
+				font-size: var(--team-score-font-size);
+				font-weight: bold;
+				position: relative;
+				&.hockey-time-stopped:before {
+					content: var(--whistle);
+					position: absolute;
+					width: 16px;
+					height: 16px;
+					top: -1em;
+					left: 50%;
+					transform: translateX(-50%);
+				}
+			}
+		}
+
+		.hockey-team{
+			z-index: 1;
+			display: grid;
+			grid-template: var(--team-layout);
+			grid-template-columns: var(--team-column-size);
+			grid-template-rows: var(--team-row-size);
+			align-items: center;
+			justify-items: center;
+			gap: 0 8px;
+			.hockey-team-name{
+				text-align: center;
+			}
+			.hockey-record{
+				display: none;
+			}
+		}
+		.hockey-extra:has(.hockey-shootout){
+			justify-self: center;		
+		}
+
+		.hockey-game-type{
+			display: none;
+		}
+	}
+	/* Final Game */
+	&.hockey-final{
+		.hockey-time-section{
+			.hockey-clock,
+			.hockey-date {
+				font-size: 18px !important;
+				margin-bottom: 0.5em;
+			}
+		}
+		.hockey-h2h{
+			margin: 1em 0;
+			padding-top: 0.5em;
+			border-top: 2px solid var(--accent-color);
+		}
+	}	
+}
+
+@media(max-width: ){
+
+}
+
+/* Side by Side */
+.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+
+	grid-template:
+		"time away"
+		"time home"
+		"extra extra";
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 50% 1fr;
+	--team-layout: "logo name";
+	--team-column-size: var(--logo-size) 1fr;
+	--team-row-size: 1fr;
+	--team-logo-size: 32px;
+	--team-name-font-size: 11px;
+	--team-score-font-size: 16px;
+	--team-sog-font-size: 11px;
+
+	&.hockey-upcoming{
+		.hockey-sog,
+		.hockey-score{
+			display: none;
+		}
+	}
+
+	&.hockey-live {
+		box-shadow: inset 0 0 10px #00ff00aa;
+		grid-template-columns: 30% 1fr;
+		--team-layout: "logo name score sog";
+		--team-column-size: var(--team-logo-size) 1fr 1em 1em;
+		--team-row-size: 1fr;
+		/* &:has(.hockey-time-stopped){
+		box-shadow: inset 0 0 10px #ffff00aa;
+	} */
+	}
+	&.hockey-final {
+		grid-template-columns: 30% 1fr;
+		--team-layout: "logo name score sog";
+		--team-column-size: var(--team-logo-size) 1fr 1em 1em;
+		--team-row-size: 1fr;
+		.weekday {
+			display: none;
+		}
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	/* Date Time Section */
+	.hockey-time-section {
+		z-index: 1;
+		grid-area: time;
+		text-align: center;
+		display: grid;
+		height: 100%;
+		gap: 5px;
+		align-items: center;
+
+		/* 	Date of the game */
+		.hockey-date {
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		/* 	Time of the game */
+		.hockey-time {
+		}
+
+		/* 	Network Game is on */
+		.hockey-network {
+			font-size: 11px;
+			font-weight: bold;
+		}
+
+		/* 	Game Period */
+		.hockey-period {
+		}
+
+		/* 	Game Clock */
+		.hockey-clock {
+			font-size: 18px;
+			font-weight: bold;
+			position: relative;
+			&.hockey-time-stopped:before {
+				content: var(--whistle);
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				top: -1em;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+		}
+
+		/* 	Final Text */
+		.hockey-final {
+		}
+	}
+
+	/* Team Section */
+	.hockey-team {
+		z-index:1;
+		display: grid;
+		grid-template: var(--team-layout);
+		grid-template-columns: var(--team-column-size);
+		grid-template-rows: var(--team-row-size);
+		align-items: center;
+		gap: 0 8px;
+
+		&.hockey-away-team {
+			grid-area: away;
+		}
+		&.hockey-home-team {
+			grid-area: home;
+		}
+
+		.hockey-team-name {
+			font-size: var(--team-name-font-size);
+			font-weight: bold;
+			text-align: left;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			grid-area: name;
+		}
+		.hockey-score {
+			font-size: var(--team-score-font-size);
+			font-weight: bold;
+			grid-area: score;
+		}
+		.hockey-sog {
+			font-size: var(--team-sog-font-size);
+			grid-area: sog;
+		}
+		.hockey-logo {
+			height: var(--team-logo-size);
+			width: var(--team-logo-size);
+			grid-area: logo;
+			overflow: hidden;
+			&[src*="nhl"] {
+				scale: 1.5;
+			}
+		}
+	}
+
+	.hockey-extra:has(.hockey-shootout) {
+		justify-self: center;
+	}
+}
+@container hockeyCard (width <= 200px) {
+	.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+		grid-template-columns: 50% 1fr !important;
+		--team-column-size: var(--team-logo-size) 1em !important;
+		--team-layout: "logo score" !important;
+		.hockey-team-name,
+		.hockey-network,
+		.hockey-sog {
+			display: none;
+		}
+	}
+}
+@container hockeyCard (width < 250px) {
+	.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+		.weekday {
+			display: none;
+		}
+	}
+}
+@container hockeyCard (width < 320px){ 
+	.hockey-scorebug.hockey-layout-side-by-side{
+		&.hockey-live{
+			.hockey-home-team,
+			.hockey-away-team{
+				&:after,
+				&:before{
+					display: none;
+				}
+			}
+		}
+	}
+}
+@container hockeyCard (width >= 320px) {
+	.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+		padding: 16px;
+		grid-template:
+			"away time home"
+			"extra extra extra";
+		grid-template-columns: 1fr 10em 1fr;
+
+		--team-logo-size: 64px;
+		--team-name-font-size: 14px;
+		--team-score-font-size: 36px;
+		--team-sog-font-size: 14px;
+
+		--team-column-size: 1fr;
+		--team-row-size: 1fr 1fr 1fr;
+		--team-layout: "logo" "logo" "name";
+
+		.hockey-time-section{
+			grid-template-rows: auto auto auto;
+			height: auto;
+			.hockey-clock{
+				grid-row: 1;
+				padding-top: 0.3em;
+			}
+		}
+
+		.hockey-team{
+			.hockey-sog,
+			.hockey-score{
+				justify-self: center;
+			}
+			.hockey-team-name{
+				text-align: center;
+			}
+		}
+
+		.hockey-away-team{
+			justify-self: end;
+		}
+		.hockey-home-team{
+			justify-self: start;
+		}
+
+		&.hockey-live,
+		&.hockey-final {
+			grid-template:
+				"away time home"
+				"extra extra extra";
+			grid-template-columns: 1fr 4.5em 1fr;		
+			--team-column-size: var(--team-logo-size) 3em;
+			--team-row-size: 1fr auto auto;
+			--team-layout: "logo score" "logo sog" "name extr";
+
+			.hockey-home-team{
+				--team-column-size: 3em var(--team-logo-size);
+				--team-layout: "score logo" "sog logo" "extr name";
+			}
+		}
+	}
+}
+@container hockeyCard (width >= 500px) {
+	.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+		--team-logo-size: 96px;
+	}
+}
+@container hockeyCard (width >= 768px) {
+	.hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
+		position: relative;
+		overflow: hidden;
+		height: 80vh;
+		--team-logo-size: 128px;
+		--team-name-font-size: 28px;
+		--team-score-font-size: 56px;
+		--team-sog-font-size: 14px;		
+		&:before{
+			display: none;
+			content: "";
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background: url("https://cdn.pixabay.com/photo/2019/02/26/14/53/ice-4022207_1280.jpg") no-repeat center;
+			background-size: cover;
+			opacity: 0.4;
+			mix-blend-mode: screen;
+			z-index:0;
+		}
+	}
+}
+
+
+/* Split
+A third layout: the two teams side by side with next to nothing on them,
+each half painted in that team's own primary colour and the two fields
+meeting on a diagonal. Everything else the card can say is dropped; the
+clock or the date rides a chip on the seam. */
+.hockey-scorebug.hockey-layout-split:not(.hockey-empty){
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	padding: 0;
+	gap: 0;
+	grid-template:
+		"away home"
+		"extra extra";
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto auto;
+
+	--team-logo-size: clamp(48px, 22cqw, 112px);
+	/* No palette: both halves take the card surface and the home side a faint
+	tint of the text colour, so the seam is still visible and the crests
+	still read. Nothing brand-coloured is invented. */
+	--split-away-field: var(--away-team-background, var(--card-background-color, #ffffff));
+	--split-home-field: var(--home-team-background, color-mix(in srgb, currentColor 9%, var(--card-background-color, #ffffff)));
+	/* A centre gutter wide enough for the chip on the seam, so the crests -
+	the only team identifier this layout keeps - never sit under it. */
+	--split-gutter: clamp(44px, 13cqw, 60px);
+
+	/* Two colour fields, clipped so their shared edge is one diagonal.
+	Wider at the top on the away side, matching the slash direction.
+	They are grid items on the teams row, not absolute over the whole card:
+	the clip percentages then measure against that row, so the split stays
+	even whatever gets added below it. */
+	background: linear-gradient(110deg,  var(--split-away-field) 0%,  var(--split-away-field) 50%,  var(--split-home-field) 50%,  var(--split-home-field) 100%);
+
+
+	.hockey-team{
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template: "logo" "score";
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		justify-items: center;
+		align-content: center;
+		gap: 6px;
+		padding: 20px 10px 24px;
+		min-width: 0;
+	}
+	.hockey-away-team{
+		grid-area: away;
+		color: var(--away-team-text, currentColor);
+		padding-right: var(--split-gutter);
+	}
+	.hockey-home-team{
+		grid-area: home;
+		color: var(--home-team-text, currentColor);
+		padding-left: var(--split-gutter);
+	}
+
+	/* Minimal info: the crest and, once there is one, the score. */
+	.hockey-team-name,
+	.hockey-record,
+	.hockey-sog{
+		display: none;
+	}
+
+	.hockey-logo{
+		grid-area: logo;
+		height: var(--team-logo-size);
+		width: var(--team-logo-size);
+		object-fit: contain;
+		&[src*="nhl"] {
+			scale: 1.15;
+		}
+	}
+
+	.hockey-score{
+		grid-area: score;
+		font-size: clamp(20px, 8cqw, 36px);
+		font-weight: 900;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+		&:empty{
+			display: none;
+		}
+	}
+
+	/* The seam runs through the middle, so the time section is lifted out of
+	the grid and centred on it in a chip of its own - the only way it stays
+	readable across two arbitrary team colours. */
+	.hockey-time-section{
+		position: relative;
+		grid-area: 1 / 1 / 2 / 3;
+		place-self: center;
+		z-index: 2;
+		display: grid;
+		justify-items: center;
+		gap: 2px;
+		text-align: center;
+		background: rgb(0 0 0 / 0.42);
+		background: linear-gradient(115deg,  rgba(0 0 0 / 0) 0%,  rgb(0 0 0 / 0.0) 5%, rgb(0 0 0 / 1) 5%,  rgb(0 0 0 / 1) 95%, rgb(0 0 0 / 0) 95%,  rgb(0 0 0 / 0) 100%);
+
+		color: #fff;
+		padding: 10px 16px 9px;
+		/* 		text-shadow: 0 1px 2px rgb(0 0 0 / 0.5); */
+
+		.hockey-game-type,
+		.hockey-network,
+		.hockey-strength{
+			display: none;
+		}
+		.hockey-date{
+			font-size: clamp(13px, 4.6cqw, 22px);
+			font-weight: 900;
+			line-height: 1.05;
+			text-transform: uppercase;
+			.weekday{
+				display: none;
+			}
+		}
+		.hockey-time{
+			font-size: clamp(10px, 3.2cqw, 14px);
+			text-transform: uppercase;
+			opacity: 0.75;
+		}
+		.hockey-period{
+			font-size: clamp(9px, 2.6cqw, 12px);
+			font-weight: 900;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			opacity: 0.75;
+		}
+		.hockey-clock{
+			font-size: clamp(14px, 3.6cqw, 18px);
+			font-weight: 900;
+			line-height: 1;
+			font-variant-numeric: tabular-nums;
+		}
+		.hockey-final{
+			font-size: clamp(11px, 3.2cqw, 15px);
+			font-weight: 900;
+			text-transform: uppercase;
+			line-height: 1.1;
+		}
+	}
+
+	/* Series tables, shootout grids and the rest have no home here. */
+	.hockey-extra{
+		display: none;
+	}
+}
+
+
+/* Split, pre-game extras. Everything the stacked pre-game card can say,
+fitted to a layout with no rows to spare: the record rides under the crest,
+the competition tag and the broadcast line join the chip on the seam, and
+the season series runs along the bottom edge as a full-width strip. */
+.hockey-scorebug.hockey-layout-split.hockey-upcoming{
+	--split-gutter: clamp(52px, 19cqw, 78px);
+
+	/* The record is a child of .hockey-team-name, so the name element has to
+	come back; zeroing its own type keeps the record without bringing the
+	nickname back with it. */
+	.hockey-team-name{
+		display: block;
+		grid-area: score;
+		font-size: 0;
+		line-height: 1;
+		text-align: center;
+	}
+	.hockey-record{
+		display: block;
+		font-size: clamp(10px, 2.8cqw, 13px);
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		opacity: 0.85;
+		cursor: help;
+	}
+
+	.hockey-time-section{
+		.hockey-game-type{
+			display: block;
+			font-size: clamp(8px, 2.2cqw, 10px);
+			font-weight: 900;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			opacity: 0.65;
+		}
+		.hockey-network{
+			display: block;
+			max-width: 14ch;
+			font-size: clamp(8px, 2.2cqw, 10px);
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			opacity: 0.65;
+		}
+	}
+
+	/* Season series: the markers only, hugging the bottom edge. Each one
+	takes the text colour of whichever side won that meeting, so the strip
+	reads against both colour fields it crosses. */
+	.hockey-extra{
+		display: block;
+		position: relative;
+		grid-area: extra;
+		z-index: 2;
+		padding: 7px 10px;
+		border: 0;
+		background: rgb(0 0 0 / 0.55);
+	}
+	.hockey-single-meeting{
+		display: none;
+	}
+	.hockey-h2h{
+		summary{
+			display: block;
+			list-style: none;
+			font-size: 0;
+			&::marker{
+				content: "";
+			}
+			&::-webkit-details-marker{
+				display: none;
+			}
+		}
+		ul{
+			display: none;
+		}
+	}
+	.hockey-series{
+		display: flex;
+		margin: 0;
+		gap: 3px;
+		/* Keyed to the winner's BACKGROUND, not its text colour: two teams
+		both lettered in white would otherwise produce two identical
+		markers, which is exactly the case a split series has to tell
+		apart. The dark band behind is what makes either colour read. */
+		.hockey-series-game{
+			height: 7px;
+			border-radius: 2px;
+			background: rgb(255 255 255 / 0.35);
+			&[data-winner="away"]{
+				background: var(--away-team-background, #ffffff);
+				box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4);
+			}
+			&[data-winner="home"]{
+				background: var(--home-team-background, rgb(255 255 255 / 0.45));
+				box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4);
+			}
+			&[data-result="tie"]{
+				background: rgb(255 255 255 / 0.7);
+			}
+			&[data-result="upcoming"]{
+				background: rgb(255 255 255 / 0.18);
+			}
+		}
+	}
+}
+
+
+/* Below 300px the split card has no room for anything beyond the crests and
+the date: the record, the competition tag, the broadcast line and the
+series strip all drop, leaving date over time on the chip. */
+@container hockeyCard (width < 300px) {
+	.hockey-scorebug.hockey-layout-split.hockey-upcoming{
+		/* Chip is back to date over time, so the gutter can be too. */
+		--split-gutter: clamp(44px, 15cqw, 60px);
+
+		.hockey-team-name,
+		.hockey-record{
+			display: none;
+		}
+		.hockey-time-section{
+			.hockey-game-type,
+			.hockey-network{
+				display: none;
+			}
+		}
+		.hockey-extra{
+			display: none;
+		}
+	}
+}
+
+
+/* Split, series panel. Closed, the strip is the whole story. Open, the extra
+becomes a dark panel over the foot of the card - the neutral surface a table
+needs, since neither team's colour field can carry small text for both. */
+.hockey-scorebug.hockey-layout-split.hockey-upcoming{
+	.hockey-h2h summary{
+		cursor: pointer;
+	}
+
+	.hockey-h2h[open]{
+		summary{
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			strong{
+				font-weight: 900;
+			}
+		}
+		.hockey-series{
+			margin-top: 8px;
+			margin-bottom: 10px;
+		}
+		ul{
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 0;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		li{
+			display: grid;
+			grid-template-columns: 4.5em 1fr 1fr 3.5em;
+			align-items: center;
+			gap: 0 8px;
+			padding: 6px 0;
+			border: 0;
+			border-top: 1px solid rgb(255 255 255 / 0.15);
+			border-radius: 0;
+			overflow: visible;
+			&:first-of-type{
+				border-top: 0;
+			}
+			/* The crest watermark behind each meeting has no place over a
+			colour field this small. */
+			&:before{
+				display: none;
+			}
+		}
+		.hockey-h2h-date{
+			grid-column: 1;
+			font-size: 11px;
+			font-weight: 700;
+			text-align: left;
+			color: rgb(255 255 255 / 0.6);
+		}
+		.hockey-h2h-result{
+			grid-column: 4;
+			font-size: 11px;
+			text-align: right;
+			color: rgb(255 255 255 / 0.5);
+		}
+		.hockey-h2h-team{
+			display: flex;
+			justify-content: space-between;
+			gap: 0.4em;
+			font-size: 12px;
+			font-weight: 700;
+			color: rgb(255 255 255 / 0.55);
+		}
+		.hockey-h2h-win{
+			font-weight: 900;
+			color: #fff;
+		}
+	}
+
+	/* Opening changes nothing but the panel: the crests, the chip and the
+	seam all live on the row above and never move. */
+	&:has(.hockey-h2h[open]) .hockey-extra{
+		padding: 12px 14px 14px;
+		background: rgb(0 0 0 / 0.88);
+		color: #fff;
+	}
+}

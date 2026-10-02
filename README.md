@@ -1,0 +1,41 @@
+# Hockey Scorebug Card
+
+A companion Lovelace card for displaying live and upcoming hockey game scorebugs.
+
+**This card requires https://github.com/tryonegg/ha-hockey also be installed.**
+
+## Screenshots
+
+![Future NHL game](images/future-nhl.png)
+
+![Future PWHL game](images/future-pwhl.png)
+
+![Live NHL game](images/live-nhl.png)
+
+## Installation
+
+### HACS
+
+1. Open HACS in Home Assistant.
+2. Go to Integrations.
+3. Select "Add custom repository".
+4. Use this repository URL:
+   `https://github.com/tryonegg/ha-hockey-card`
+5. Set the category to "Dashboard".
+6. Install the card.
+
+### Manual installation
+
+Copy both files from this repository into your Home Assistant `www` directory and reference them in your dashboard:
+
+- `hockey-scorebug-card.js`
+- `hockey-scorebug-card.css`
+
+The card loads its stylesheet from the same folder as the JS file. Keep the `.js` and `.css` files together in the same directory when installing manually.
+
+## Usage
+
+1. Add the companion component https://github.com/tryonegg/ha-hockey
+1. Add a team with that component
+1. Add a new card to a dashboard. Select By Card. Search for Hockey, Select the card ![Screenshot of the Homeassistant UI showing a user searching for the Hockey Card which is displayed below the search input](images/card-select.png)
+1. Pick your tracked team. Select save  ![Screenshot of the Homeassistant UI showing an option to pick a team for the hockey card and a preview of the team displayed on the card](images/card-add.png)
