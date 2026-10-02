@@ -26,12 +26,11 @@ A companion Lovelace card for displaying live and upcoming hockey game scorebugs
 
 ### Manual installation
 
-Copy both files from this repository into your Home Assistant `www` directory and reference them in your dashboard:
+After running the build, copy the generated file from the `dist` folder into your Home Assistant `www` directory and reference it in your dashboard:
 
-- `hockey-scorebug-card.js`
-- `hockey-scorebug-card.css`
+- `dist/hockey-scorebug-card.js`
 
-The card loads its stylesheet from the same folder as the JS file. Keep the `.js` and `.css` files together in the same directory when installing manually.
+This is a single-file card bundle, so no separate CSS file is required when installed from the built output.
 
 ## Usage
 
@@ -39,3 +38,13 @@ The card loads its stylesheet from the same folder as the JS file. Keep the `.js
 1. Add a team with that component
 1. Add a new card to a dashboard. Select By Card. Search for Hockey, Select the card ![Screenshot of the Homeassistant UI showing a user searching for the Hockey Card which is displayed below the search input](images/card-select.png)
 1. Pick your tracked team. Select save  ![Screenshot of the Homeassistant UI showing an option to pick a team for the hockey card and a preview of the team displayed on the card](images/card-add.png)
+
+## Development
+
+To bundle the stylesheet into the JavaScript for a single-file HACS install:
+
+```bash
+npm run build
+```
+
+This reads the source files from `src/` and writes the bundled output to `dist/hockey-scorebug-card.js`.

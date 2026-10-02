@@ -1,7 +1,7 @@
 {
   "name": "Hockey Scorebug Card",
-  "filename": "hockey-scorebug-card.js",
-  "content_in_root": true,
+  "filename": "dist/hockey-scorebug-card.js",
+  "content_in_root": false,
   "render_readme": true,
   "homeassistant": "2024.1.0"
 }

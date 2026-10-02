@@ -1,0 +1,7 @@
+{
+  "name": "ha-hockey-card",
+  "private": true,
+  "scripts": {
+    "build": "node build-card.js"
+  }
+}
