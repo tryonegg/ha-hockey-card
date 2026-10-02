@@ -17,12 +17,12 @@ A companion Lovelace card for displaying live and upcoming hockey game scorebugs
 ### HACS
 
 1. Open HACS in Home Assistant.
-2. Go to Integrations.
-3. Select "Add custom repository".
-4. Use this repository URL:
+2. Click the ⋮ menu in the top right and choose **Custom repositories**.
+3. Enter this repository URL:
    `https://github.com/tryonegg/ha-hockey-card`
-5. Set the category to "Dashboard".
-6. Install the card.
+4. Set the type to **Dashboard** and click **Add**.
+5. Find "Hockey Scorebug Card" in HACS and click **Download**.
+6. Reload your browser (or restart Home Assistant if the card doesn't appear).
 
 ### Manual installation
 
