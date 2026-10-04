@@ -28,13 +28,26 @@ const HOCKEY_EDITOR_SCHEMA = [
 
 const HOCKEY_LAYOUTS = ["stacked", "side_by_side", "split"];
 
+/**
+ * The integration also creates a "Next Game" timestamp sensor per team. It
+ * carries no game attributes, so the card has nothing to render from it.
+ */
+function isNextGameSensor(hass, id) {
+  const a = (hass.states[id] && hass.states[id].attributes) || {};
+  return a.device_class === "timestamp";
+}
+
+/** Game sensors from the integration's registry entries, scorebug-capable or not. */
+function hockeyRegistrySensors(hass) {
+  return Object.values(hass.entities || {})
+    .filter((e) => e.platform === "hockey" && String(e.entity_id).startsWith("sensor."))
+    .map((e) => e.entity_id);
+}
+
 /** Sensors belonging to this integration, for the picker and the stub config. */
 function hockeyEntities(hass) {
   if (!hass) return [];
-  const registry = Object.values(hass.entities || {});
-  const fromRegistry = registry
-    .filter((e) => e.platform === "hockey" && String(e.entity_id).startsWith("sensor."))
-    .map((e) => e.entity_id);
+  const fromRegistry = hockeyRegistrySensors(hass).filter((id) => !isNextGameSensor(hass, id));
   if (fromRegistry.length) return fromRegistry;
   // Older cores expose no entity registry to the frontend; fall back to the
   // attributes only this integration sets.
@@ -854,7 +867,7 @@ class hockeyScorebugCardEditor extends HTMLElement {
         this.appendChild(this._form);
       }
       this._form.hass = this._hass;
-      this._form.schema = HOCKEY_EDITOR_SCHEMA;
+      this._form.schema = this._schema();
       this._form.data = {
         entity: this._config.entity,
         layout: this._config.layout || "auto",
@@ -862,6 +875,18 @@ class hockeyScorebugCardEditor extends HTMLElement {
     } else {
       this._renderFallback();
     }
+  }
+
+  _schema() {
+    // The entity selector can't filter by device class negatively, so list
+    // the integration's next-game sensors explicitly.
+    const exclude = hockeyRegistrySensors(this._hass).filter((id) => isNextGameSensor(this._hass, id));
+    if (!exclude.length) return HOCKEY_EDITOR_SCHEMA;
+    return HOCKEY_EDITOR_SCHEMA.map((field) =>
+      field.name === "entity"
+        ? { ...field, selector: { entity: { ...field.selector.entity, exclude_entities: exclude } } }
+        : field
+    );
   }
 
   _renderFallback() {
