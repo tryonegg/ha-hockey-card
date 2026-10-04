@@ -77,7 +77,7 @@
 			flex-wrap: nowrap;
 			margin: 0;
 			gap: 3px;
-      cursor: pointer;
+			cursor: pointer;
 			.hockey-series-game{
 				height: 7px;
 				border-radius: 2px;
@@ -569,9 +569,6 @@
 	}	
 }
 
-@media(max-width: ){
-
-}
 
 /* Side by Side */
 .hockey-scorebug.hockey-layout-side-by-side:not(.hockey-empty){
@@ -606,6 +603,8 @@
 		/* &:has(.hockey-time-stopped){
 		box-shadow: inset 0 0 10px #ffff00aa;
 	} */
+		/* 	Time of the game */
+
 	}
 	&.hockey-final {
 		grid-template-columns: 30% 1fr;
@@ -653,7 +652,7 @@
 
 		/* 	Game Clock */
 		.hockey-clock {
-			font-size: 18px;
+			font-size: 24px;
 			font-weight: bold;
 			position: relative;
 			&.hockey-time-stopped:before {
@@ -775,8 +774,8 @@
 			grid-template-rows: auto auto auto;
 			height: auto;
 			.hockey-clock{
-				grid-row: 1;
-				padding-top: 0.3em;
+/* 				grid-row: 1; */
+/* 				padding-top: 0.3em; */
 			}
 		}
 
